@@ -1,0 +1,21 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.sqlite3
+
+.env
+
+.venv/
+venv/
+.env/
+
+# macOS files
+.DS_Store
+
+# TF-IDF artifacts
+*.pkl
+
+# VSCode
+.vscode/

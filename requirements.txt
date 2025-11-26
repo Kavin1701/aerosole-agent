@@ -1,0 +1,8 @@
+fastapi>=0.100.0
+python-multipart>=0.0.6
+uvicorn[standard]
+python-dotenv==1.0.1
+langchain==0.3.0
+langgraph>=0.0.1
+pandas
+scikit-learn
