@@ -6,13 +6,17 @@ from src.services.langgraph_agent.models.state import State
 from langgraph.types import Command
 from src.libs.shared_utils.logger import logger
 from src.services.vectorization.tf_idf_retriever import TfidfRetriever
-
+from src.services.langgraph_agent.utils.llm_helper import update_search_query
 
 def search_node(state: State, df: pd.DataFrame, retriever: TfidfRetriever) -> State:
     logger.info("[SEARCH_NODE] Start: >>>>>> ")
 
-    query = state.query
+    cur_query = state.query
+    prev_query = state.search_query
 
+    query = update_search_query(cur_query, prev_query)
+    logger.info(f" <QUERY>: {query}")
+    
     # Run TF-IDF retrieval
     retrieved = retriever(query, top_k=5)
     retrieved_titles = [r["title"] for r in retrieved]
@@ -34,8 +38,9 @@ def search_node(state: State, df: pd.DataFrame, retriever: TfidfRetriever) -> St
         for _, row in matched_df.iterrows()
     }
 
-    logger.info("[SEARCH_NODE] Matched products: %s", state.matched_products)
+    logger.debug("[SEARCH_NODE] Matched products: %s", state.matched_products)
 
+    state.search_query = query
     state.query = "communicate to the user"
     return state
 
