@@ -1,42 +1,30 @@
-## 🛠️ Installation Guide
+# Aerosole Agent
 
-### 1. Clone the repository
 
+## 🛠️ Quick Start
+
+### Prerequisites
+- Docker Desktop (or Docker engine) installed and running.
+- Git installed for cloning the repository.
+
+## Installation Guide (Docker)
+
+### 1. Clone the Repository
 ```bash
 git clone https://github.com/kavin-1digitals/aerosole-agent.git
-```
-```
 cd aerosole-agent
 ```
-### 2. Create a virtual environment
-```bash
-python3 -m venv .venv
-```
-### 3. Activate the virtual environment
-macOS / Linux:
-```bash
-source .venv/bin/activate
-```
-Windows (PowerShell):
-```bash
-.venv\Scripts\activate
-```
-📦 Install Dependencies
-```bash
-pip install -r requirements.txt
-```
-### 4. Run the Project
-Start the FastAPI backend:
-```bash
-python3 -m src.services.fastapi_backend.main
-```
-Your API will be available at:
 
-👉 http://0.0.0.0:8000/docs
-
-🧪 Test the Agent
-Example request (via browser or API client):
-
-```sql
-GET /api/invoke_agent?query=search me casual shoes
+### 2. Build the Docker Image
+Ensure Docker is running, then build the image:
+```bash
+docker build -t aerosole-agent .
 ```
+
+### 3. Run the Docker Container
+Start the container, mapping port 8000:
+```bash
+docker run -p 8000:8000 aerosole-agent
+```
+- This maps the container's port 8000 to the host's port 8000.
+- The FastAPI backend will start automatically.
