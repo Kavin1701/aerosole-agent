@@ -8,7 +8,7 @@ from src.libs.shared_utils.logger import logger
 from src.services.vectorization.tf_idf_retriever import TfidfRetriever
 from src.services.langgraph_agent.utils.llm_helper import update_search_query
 
-def search_node(state: State, df: pd.DataFrame, retriever: TfidfRetriever) -> State:
+def search_node(state: State, df1: pd.DataFrame, df2: pd.DataFrame, retriever: TfidfRetriever) -> State:
     logger.info("[SEARCH_NODE] Start: >>>>>> ")
 
     cur_query = state.query
@@ -22,7 +22,7 @@ def search_node(state: State, df: pd.DataFrame, retriever: TfidfRetriever) -> St
     retrieved_titles = [r["title"] for r in retrieved]
 
     # Filter df
-    matched_df = df[df["title"].isin(retrieved_titles)]
+    matched_df = df1[df1["title"].isin(retrieved_titles)]
 
     # Convert to dict keyed by title
     state.matched_products = {
@@ -33,7 +33,7 @@ def search_node(state: State, df: pd.DataFrame, retriever: TfidfRetriever) -> St
             "details": row["details"],
             "price": row["price"],
             "num_colors": row["num_colors"],
-            "img": "https://assets.vans.com/images/t_img/c_fill,g_center,f_auto,h_550,e_unsharp_mask:100,w_440/dpr_2.0/v1750722159/VN000DARBKA-HERO/Sk8Hi-GORETEX-Insulated-Shoe.jpg",
+            "img": df2[df2['title_x'] == row['title']].head(1)['img'].iloc[0],
         }
         for _, row in matched_df.iterrows()
     }
