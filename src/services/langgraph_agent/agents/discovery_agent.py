@@ -28,7 +28,8 @@ def search_node(state: State, df: pd.DataFrame, retriever: TfidfRetriever) -> St
             "style_description": row["style_description"],
             "details": row["details"],
             "price": row["price"],
-            "num_colors": row["num_colors"]
+            "num_colors": row["num_colors"],
+            "img": "https://assets.vans.com/images/t_img/c_fill,g_center,f_auto,h_550,e_unsharp_mask:100,w_440/dpr_2.0/v1750722159/VN000DARBKA-HERO/Sk8Hi-GORETEX-Insulated-Shoe.jpg",
         }
         for _, row in matched_df.iterrows()
     }
