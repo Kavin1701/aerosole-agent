@@ -2,6 +2,7 @@
 
 from dataclasses import dataclass, field
 from typing import List, Optional, Tuple
+from src.libs.shared_models.response import Response
 
 @dataclass
 class State:
@@ -9,4 +10,4 @@ class State:
     intent: Optional[List[str]] = field(default_factory=list)
     messages: List[str] = field(default_factory=list)
     matched_products: Optional[dict] = None
-    response: Optional[str] = None
+    response: Response = field(default_factory=Response)

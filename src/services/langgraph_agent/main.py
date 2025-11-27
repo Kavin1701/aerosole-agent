@@ -11,12 +11,12 @@ from src.services.langgraph_agent.orchestrator import orchestrator_node, control
 
 shoes_master = Path(__file__).resolve().parents[3] / "data" / "vans_shoes_master.csv"
 df = pd.read_csv(shoes_master)
-TfidfRetriever(df=df)
+tfidf_retriever = TfidfRetriever(df=df)
 
 graph = StateGraph(State)
 graph.add_node("orchestrator", orchestrator_node)
 graph.add_node("controller", controller_node)
-graph.add_node("search", lambda s: search_node(s, df))
+graph.add_node("search", lambda s: search_node(s, df, tfidf_retriever))
 graph.add_node("communicator", communicator_node)
 
 graph.add_conditional_edges(

@@ -19,3 +19,5 @@ venv/
 
 # VSCode
 .vscode/
+
+app.log

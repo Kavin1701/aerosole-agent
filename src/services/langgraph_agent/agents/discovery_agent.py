@@ -6,9 +6,9 @@ from src.services.langgraph_agent.models.state import State
 from langgraph.types import Command
 from src.libs.shared_utils.logger import logger
 from src.services.vectorization.tf_idf_retriever import TfidfRetriever
-retriever = TfidfRetriever()
 
-def search_node(state: State, df: pd.DataFrame) -> State:
+
+def search_node(state: State, df: pd.DataFrame, retriever: TfidfRetriever) -> State:
     logger.info("[SEARCH_NODE] Start: >>>>>> ")
 
     query = state.query

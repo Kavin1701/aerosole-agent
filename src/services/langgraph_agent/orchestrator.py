@@ -10,12 +10,12 @@ def orchestrator_node(state: State) -> State:
 
     query = state.query.lower()
 
-    if any(word in query for word in ["search", "part", "need", "want", "require"]):
+    if any(word in query for word in ["get", "search", "need", "want", "require"]):
         state.intent.append("search")
         state.messages.append("Intent classified as SEARCH.")
         logger.info("[ORCHESTRATOR_NODE] Intent classified as SEARCH for query='%s'", query)
 
-    elif any(word in query for word in ["communicate", "part", "need", "want", "require"]):
+    elif any(word in query for word in ["communicate"]):
         state.intent.append("communicate")
         state.messages.append("Intent classified as COMMUNICATE.")
         logger.info("[ORCHESTRATOR_NODE] Intent classified as COMMUNICATE for query='%s'", query)
