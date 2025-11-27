@@ -11,7 +11,7 @@
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/kavin-1digitals/aerosole-agent.git
+git clone https://github.com/Kavin1701/aerosole-agent.git
 cd aerosole-agent
 ```
 
