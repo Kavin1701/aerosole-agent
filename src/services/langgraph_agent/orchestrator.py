@@ -10,10 +10,10 @@ def orchestrator_node(state: State) -> State:
 
     query = state.query.lower()
 
-    if any(word in query for word in ["get", "search", "need", "want", "require"]):
-        state.intent.append("search")
-        state.messages.append("Intent classified as SEARCH.")
-        logger.info("[ORCHESTRATOR_NODE] Intent classified as SEARCH for query='%s'", query)
+    if query == "end":
+        state.intent.append("end")
+        state.messages.append("Intent classified as END.")
+        logger.info("[ORCHESTRATOR_NODE] Intent classified as END for query='%s'", query)
 
     elif any(word in query for word in ["communicate"]):
         state.intent.append("communicate")
@@ -21,13 +21,12 @@ def orchestrator_node(state: State) -> State:
         logger.info("[ORCHESTRATOR_NODE] Intent classified as COMMUNICATE for query='%s'", query)
 
     else:
-        state.intent.append("end")
-        state.messages.append("Intent classified as END.")
-        logger.info("[ORCHESTRATOR_NODE] Intent classified as END for query='%s'", query)
+        state.intent.append("search")
+        state.messages.append("Intent classified as SEARCH.")
+        logger.info("[ORCHESTRATOR_NODE] Intent classified as SEARCH for query='%s'", query)
 
     logger.debug("[ORCHESTRATOR_NODE] EXIT: %s", state)
     return state
-
 
 
 def controller_node(state: State) -> State:
