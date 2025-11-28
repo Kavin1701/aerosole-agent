@@ -1,5 +1,9 @@
 # src/services/langgraph_agent/utils/llm_helper.py
 
+from src.services.langgraph_agent.chains.matching_entities_finder_chain import chain as matching_entities_finder_chain
+from src.services.langgraph_agent.chains.matching_entities_finder_chain import EntityResponse
+from src.libs.shared_utils.logger import logger
+
 def update_search_query(cur_search_query, prev_search_query):
     return f'{prev_search_query} {cur_search_query}'
 
@@ -364,3 +368,15 @@ def filter_color_search_query(search_query):
     
     
     return None
+
+def find_matched_entities(search_query: str, product_context: str):
+    """Return list of entities with confidence scores using structured Pydantic output."""
+    try:
+        result: EntityResponse = matching_entities_finder_chain.invoke({
+            "search_query": search_query,
+            "product_context": product_context
+        })
+        return [e.model_dump() for e in result.entities]
+    except Exception as e:
+        logger.error("⚠️ LLM/Parsing Error:", e)
+        return []

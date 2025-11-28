@@ -6,7 +6,7 @@ from src.services.langgraph_agent.models.state import State
 from langgraph.types import Command
 from src.libs.shared_utils.logger import logger
 from src.services.vectorization.tf_idf_retriever import TfidfRetriever
-from src.services.langgraph_agent.utils.llm_helper import update_search_query
+from src.services.langgraph_agent.utils.llm_helper import update_search_query, find_matched_entities
 
 def search_node(state: State, df1: pd.DataFrame, df2: pd.DataFrame, retriever: TfidfRetriever) -> State:
     logger.info("[SEARCH_NODE] Start: >>>>>> ")
@@ -34,6 +34,7 @@ def search_node(state: State, df1: pd.DataFrame, df2: pd.DataFrame, retriever: T
             "price": row["price"],
             "num_colors": row["num_colors"],
             "img": df2[df2['title_x'] == row['title']].head(1)['img'].iloc[0],
+            "entities": find_matched_entities(query, f'{row["title"]} {row["subtitle"]} {row["short_description"]} {row["style_description"]} {row["details"]}')
         }
         for _, row in matched_df.iterrows()
     }

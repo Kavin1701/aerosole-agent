@@ -18,7 +18,7 @@ def orchestrator_node(state: State) -> State:
     # elif any(word in query for word in ["clear", "refresh"]):
     #     state.intent.append("clear_search")
     #     state.messages.append("Intent classified as CLEAR_SEARCH")
-    #     logger.info
+    #     logger.info("[ORCHESTRATOR_NODE] Intent classified as CLEAR_SEARCH for query='%s'", query)
 
     elif any(word in query for word in ["communicate"]):
         state.intent.append("communicate")
