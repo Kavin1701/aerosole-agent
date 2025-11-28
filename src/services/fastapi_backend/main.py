@@ -10,6 +10,7 @@ from pydantic.dataclasses import dataclass
 from src.services.langgraph_agent.graph import aerosole_agent
 from src.services.langgraph_agent.main import run_graph
 from src.libs.shared_models.response import Response as ResponseSchema
+from fastapi.middleware.cors import CORSMiddleware
 
 cache = {}
 
@@ -20,6 +21,14 @@ PORT = int(os.getenv("PORT"))
 HOST = os.getenv("HOST")
 
 fastapi_backend = FastAPI(title="Aerosole Agent API")
+
+fastapi_backend.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],  # React dev server
+    allow_credentials=True,
+    allow_methods=["*"],  # you can allow all if needed
+    allow_headers=["*"],
+)
 
 @fastapi_backend.get("/")
 async def root():
@@ -32,7 +41,9 @@ class QueryRequest(BaseModel):
 @fastapi_backend.post("/api/invoke_agent", response_model=ResponseSchema, tags=["Aerosole Agent"])
 async def invoke_agent(req: QueryRequest):
     thread_id = "12345"
-    state = run_graph(thread_id, req.query, aerosole_agent, cache)
+    user_query = req.query
+    state = run_graph(thread_id, user_query, aerosole_agent, cache)
+    state.response.user_query = user_query
     return state.response
 
 if __name__ == "__main__":

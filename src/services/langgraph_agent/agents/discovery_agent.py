@@ -44,3 +44,7 @@ def search_node(state: State, df1: pd.DataFrame, df2: pd.DataFrame, retriever: T
     state.query = "communicate to the user"
     return state
 
+# def clear_search_node(state: State) -> State:
+#     logger.info("[CLEAR_SEARCH_NODE] Start: >>>>>> ")
+
+#     state.
