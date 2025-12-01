@@ -7,3 +7,4 @@ langgraph>=0.0.1
 pandas
 scikit-learn
 langchain-groq
+langchain-openai
