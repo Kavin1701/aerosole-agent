@@ -1,11 +1,24 @@
 # src/services/langgraph_agent/utils/llm_helper.py
 
 from src.services.langgraph_agent.chains.matching_entities_finder_chain import chain as matching_entities_finder_chain
+from src.services.langgraph_agent.chains.update_search_query_chain import chain as search_query_updation_chain
+from src.services.langgraph_agent.chains.update_search_query_chain import UpdatedQuery
 from src.services.langgraph_agent.chains.matching_entities_finder_chain import EntityResponse
 from src.libs.shared_utils.logger import logger
 
 def update_search_query(cur_search_query, prev_search_query):
-    return f'{prev_search_query} {cur_search_query}'
+    prev_search_query = prev_search_query or ""
+    
+    try:
+        result: UpdatedQuery = search_query_updation_chain.invoke({
+            "prev_search_query": prev_search_query,
+            "cur_search_query": cur_search_query
+        })
+        return result.updated_search_query.strip()
+    
+    except Exception as e:
+        print("⚠️ LLM Query Refinement Error:", e)
+        return prev_search_query  # fail-safe: do NOT modify query
 
 def filter_color_search_query(search_query):
     COLORS = [

@@ -10,6 +10,7 @@ def communicator_node(state: State) -> State:
     if len(state.intent) >= 2 and state.intent[-2] == "search":
 
         result_payload = {
+            "current_search_query": state.search_query,
             "product_count": len(state.matched_products),
             "products": [
                 {

@@ -21,3 +21,4 @@ venv/
 .vscode/
 
 app.log
+config/langgraph_agent.env

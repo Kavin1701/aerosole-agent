@@ -43,6 +43,7 @@ Return JSON only, do not include any explanatory text.
 """)
 ])
 
+
 # ---------------- Chain ----------------
 
 llm_model = get_llm()
