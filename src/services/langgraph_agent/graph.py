@@ -3,6 +3,7 @@
 import pandas as pd
 from pathlib import Path
 from src.services.vectorization.tf_idf_retriever import TfidfRetriever
+from src.services.vectorization.vector_retriever import VectorRetriever
 from langgraph.graph import StateGraph, END, START
 from src.services.langgraph_agent.models.state import State
 from src.services.langgraph_agent.agents.communicator_agent import communicator_node
@@ -16,12 +17,13 @@ df1 = pd.read_csv(shoes_master)
 shoe_variants = Path(__file__).resolve().parents[3] / "data" / "vans_shoe_variants.csv"
 df2 = pd.read_csv(shoe_variants)
 
-tfidf_retriever = TfidfRetriever(df=df1)
+# retriever = TfidfRetriever(df=df1)
+retriever = VectorRetriever()
 
 graph = StateGraph(State)
 graph.add_node("orchestrator", orchestrator_node)
 graph.add_node("controller", controller_node)
-graph.add_node("search", lambda s: search_node(s, df1, df2, tfidf_retriever))
+graph.add_node("search", lambda s: search_node(s, df1, df2, retriever))
 graph.add_node("communicator", communicator_node)
 
 graph.add_conditional_edges(

@@ -18,20 +18,52 @@ class EntityResponse(BaseModel):
 
 ENTITY_PROMPT = ChatPromptTemplate.from_messages([
     ("system",
-     """You are an AI assistant that extracts key descriptive entities ONLY from the product text that directly correspond to specific elements explicitly mentioned in the user's query. 
+     """
+You extract meaningful product-related entities from the user query ONLY if they appear in (or are strong synonyms of) concepts found in the product context.
 
-Do not include any entities that are not directly referenced or synonymous with phrases in the query. For example, if the query mentions 'padded collar for support', only extract that if present in the product context; ignore unrelated features like colors, brands, or other specs.
+---
 
-Focus on meaningful, concise multi-word phrases that combine for better description (e.g., 'padded collar for support' instead of separate words), but only if they match query elements.
+### ENTITY RULES
 
-Ignore generic terms like 'shoes' unless combined meaningfully with query specifics. Do not hallucinate or imply anything beyond exact or near-exact matches in the product context.
+- Extract only meaningful product attributes, features, types, or variations.
+- Keep phrases concise: **2–4 words max**.
+- Avoid long or sentence-like entities.
+- Do NOT return multiple versions of the same meaning.
+- If an entity appears with **confidence 1.0**, do NOT return weaker variations of the same meaning.
+- Maximum **3 unique entities**.
 
-Assign confidence: 1.0 for exact phrase matches, 0.9-0.7 for strong synonyms or partial matches present in both, below 0.7 if not sufficiently direct—exclude if below 0.7.
+---
 
-Respond strictly in JSON in the format:
-{{"entities":[{{"entity":"string","confidence":float}}]}}. 
+### CONFIDENCE RULES
 
-If no matches, return empty list: {{"entities":[]}}."""),
+| Match Type | Confidence |
+|------------|------------|
+| Exact phrase match in both query & context | **1.0** |
+| Minor variation (plural, ordering) | **0.9** |
+| Strong synonym | **0.75–0.89** |
+| Anything weaker → **exclude** |
+
+---
+
+### OUTPUT FORMAT (STRICT)
+
+Return ONLY valid JSON in this format:
+
+{{
+  "entities": [
+    {{
+      "entity": "string",
+      "confidence": float
+    }}
+  ]
+}}
+
+If no valid match exists, return:
+
+{{
+  "entities": []
+}}
+"""),
     ("human",
      """
 User Query: {search_query}
@@ -39,10 +71,9 @@ User Query: {search_query}
 Product Context:
 {product_context}
 
-Return JSON only, do not include any explanatory text.
+Return JSON only.
 """)
 ])
-
 
 # ---------------- Chain ----------------
 

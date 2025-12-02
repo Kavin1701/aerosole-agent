@@ -22,7 +22,8 @@ def communicator_node(state: State) -> State:
                     "price": pdata.get("price"),
                     "num_colors": pdata.get("num_colors"),
                     "img": pdata.get("img"),
-                    "entities": pdata.get("entities")
+                    "entities": pdata.get("entities"),
+                    "confidence": pdata.get("confidence")
                 }
                 for title, pdata in state.matched_products.items()
             ]
