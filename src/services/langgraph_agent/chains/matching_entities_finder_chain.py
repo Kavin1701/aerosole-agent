@@ -16,21 +16,33 @@ ENTITY_PROMPT = ChatPromptTemplate.from_messages([
     (
         "system",
         """
-Extract key entities from a user query. Entities can be:
-- Objects
-- Places
-- Categories
-- Concepts
-- Multi-word phrases
+Extract meaningful standalone entities from the user query. 
+Break longer compound phrases into smaller meaningful parts if needed.
 
-### STRICT OUTPUT FORMAT
+Entities may include:
+- Attributes (ex: "aesthetic", "lightweight")
+- Styles (ex: "checkerboard", "retro design")
+- Product types (ex: "low top shoe", "running shoes")
+- Materials (ex: "leather", "canvas")
+- Concepts or categories
+
+Rules:
+- Prefer concise entities that represent meaning on their own.
+- Avoid generic filler words such as "with", "for", "and", "the".
+- Do NOT include numbers unless they indicate size, model, or SKU.
+- Do NOT include stopwords or repeated phrases.
+- Maintain multi-word entities only if they represent a known concept 
+  (e.g., "low top shoe", "mountain bike", "air cushion sole").
+
+### OUTPUT FORMAT (STRICT)
 
 Return ONLY valid JSON:
 
 {{
   "entities": [
     "entity1",
-    "entity2"
+    "entity2",
+    "entity3"
   ]
 }}
 """
@@ -40,6 +52,7 @@ Return ONLY valid JSON:
         "Query: {search_query}\nReturn JSON only."
     )
 ])
+
 
 
 
