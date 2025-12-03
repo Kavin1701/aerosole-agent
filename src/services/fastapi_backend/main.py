@@ -24,7 +24,7 @@ fastapi_backend = FastAPI(title="Aerosole Agent API")
 
 fastapi_backend.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],  # React dev server
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],  # you can allow all if needed
     allow_headers=["*"],
