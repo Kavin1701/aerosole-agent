@@ -3,77 +3,45 @@ from pydantic import BaseModel
 from langchain_core.prompts import ChatPromptTemplate
 from src.services.langgraph_agent.utils.llm import get_llm
 
+
 # ---------------- Pydantic Output Model ----------------
 
-class EntityMatch(BaseModel):
-    entity: str
-    confidence: float
-
-
 class EntityResponse(BaseModel):
-    entities: List[EntityMatch]
+    entities: List[str]
 
 
 # ---------------- Prompt ----------------
 
 ENTITY_PROMPT = ChatPromptTemplate.from_messages([
-    ("system",
-     """
-You extract meaningful product-related entities from the user query ONLY if they appear in (or are strong synonyms of) concepts found in the product context.
+    (
+        "system",
+        """
+Extract key entities from a user query. Entities can be:
+- Objects
+- Places
+- Categories
+- Concepts
+- Multi-word phrases
 
----
+### STRICT OUTPUT FORMAT
 
-### ENTITY RULES
-
-- Extract only meaningful product attributes, features, types, or variations.
-- Keep phrases concise: **2–4 words max**.
-- Avoid long or sentence-like entities.
-- Do NOT return multiple versions of the same meaning.
-- If an entity appears with **confidence 1.0**, do NOT return weaker variations of the same meaning.
-- Maximum **3 unique entities**.
-
----
-
-### CONFIDENCE RULES
-
-| Match Type | Confidence |
-|------------|------------|
-| Exact phrase match in both query & context | **1.0** |
-| Minor variation (plural, ordering) | **0.9** |
-| Strong synonym | **0.75–0.89** |
-| Anything weaker → **exclude** |
-
----
-
-### OUTPUT FORMAT (STRICT)
-
-Return ONLY valid JSON in this format:
+Return ONLY valid JSON:
 
 {{
   "entities": [
-    {{
-      "entity": "string",
-      "confidence": float
-    }}
+    "entity1",
+    "entity2"
   ]
 }}
-
-If no valid match exists, return:
-
-{{
-  "entities": []
-}}
-"""),
-    ("human",
-     """
-User Query: {search_query}
-
-Product Context:
-{product_context}
-
-Return JSON only.
-""")
+"""
+    ),
+    (
+        "human",
+        "Query: {search_query}\nReturn JSON only."
+    )
 ])
+
+
 
 # ---------------- Chain ----------------
 

@@ -382,14 +382,13 @@ def filter_color_search_query(search_query):
     
     return None
 
-def find_matched_entities(search_query: str, product_context: str):
-    """Return list of entities with confidence scores using structured Pydantic output."""
+def find_matched_entities(search_query: str):
+    """Return list of extracted entities."""
     try:
         result: EntityResponse = matching_entities_finder_chain.invoke({
             "search_query": search_query,
-            "product_context": product_context
         })
-        return [e.model_dump() for e in result.entities]
+        return result.entities
     except Exception as e:
-        logger.error("⚠️ LLM/Parsing Error:", e)
+        logger.error(f"⚠️ LLM/Parsing Error: {e}")
         return []

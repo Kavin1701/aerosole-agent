@@ -42,10 +42,7 @@ def search_node(state: State, df1: pd.DataFrame, df2: pd.DataFrame, retriever: V
             "num_colors": row["num_colors"],
             "img": df2[df2['title_x'] == title].head(1)['img'].iloc[0],
             "confidence": confidence_map.get(title),
-            "entities": find_matched_entities(
-                query,
-                f'{title} {row["subtitle"]} {row["short_description"]} {row["style_description"]} {row["details"]}'
-            )
+            "entities": find_matched_entities(cur_query)
         }
         for title, row in matched_df.set_index("title").loc[retrieved_titles].iterrows()
     }
