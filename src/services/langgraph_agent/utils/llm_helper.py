@@ -6,6 +6,9 @@ from src.services.langgraph_agent.chains.update_search_query_chain import Update
 from src.services.langgraph_agent.chains.matching_entities_finder_chain import EntityResponse
 from src.libs.shared_utils.logger import logger
 
+from src.libs.shared_utils.timer import time_logger
+
+# @time_logger
 def update_search_query(cur_search_query, prev_search_query):
     prev_search_query = prev_search_query or ""
     
@@ -20,6 +23,19 @@ def update_search_query(cur_search_query, prev_search_query):
         print("⚠️ LLM Query Refinement Error:", e)
         return prev_search_query  # fail-safe: do NOT modify query
 
+
+# @time_logger
+def find_matched_entities(search_query: str):
+    """Return list of extracted entities."""
+    try:
+        result: EntityResponse = matching_entities_finder_chain.invoke({
+            "search_query": search_query,
+        })
+        return result.entities
+    except Exception as e:
+        logger.error(f"⚠️ LLM/Parsing Error: {e}")
+        return []
+    
 def filter_color_search_query(search_query):
     COLORS = [
                 'Customs',
@@ -381,14 +397,3 @@ def filter_color_search_query(search_query):
     
     
     return None
-
-def find_matched_entities(search_query: str):
-    """Return list of extracted entities."""
-    try:
-        result: EntityResponse = matching_entities_finder_chain.invoke({
-            "search_query": search_query,
-        })
-        return result.entities
-    except Exception as e:
-        logger.error(f"⚠️ LLM/Parsing Error: {e}")
-        return []

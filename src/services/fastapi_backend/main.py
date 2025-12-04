@@ -11,6 +11,7 @@ from src.services.langgraph_agent.graph import aerosole_agent
 from src.services.langgraph_agent.main import run_graph
 from src.libs.shared_models.response import Response as ResponseSchema
 from fastapi.middleware.cors import CORSMiddleware
+from src.libs.shared_utils.timer import time_logger
 
 cache = {}
 
@@ -39,6 +40,7 @@ class QueryRequest(BaseModel):
 
 
 @fastapi_backend.post("/api/invoke_agent", response_model=ResponseSchema, tags=["Aerosole Agent"])
+@time_logger
 async def invoke_agent(req: QueryRequest):
     thread_id = "12345"
     user_query = req.query

@@ -8,30 +8,35 @@ from src.libs.shared_utils.logger import logger
 # from src.services.vectorization.tf_idf_retriever import TfidfRetriever
 from src.services.vectorization.vector_retriever import VectorRetriever
 from src.services.langgraph_agent.utils.llm_helper import update_search_query, find_matched_entities
+from src.libs.shared_utils.timer import time_logger
+import time
 
+# @time_logger
 def search_node(state: State, df1: pd.DataFrame, df2: pd.DataFrame, retriever: VectorRetriever) -> State:
-    logger.info("[SEARCH_NODE] Start: >>>>>> ")
+    logger.info("[SEARCH_NODE] Start >>>>>>")
 
+    # 1️⃣ Update search query
     cur_query = state.query
     prev_query = state.search_query
-
     query = update_search_query(cur_query, prev_query)
-    logger.info(f" <QUERY>: {query}")
-    
-    # Run similarity search and sort by confidence
+
+    # 2️⃣ Extract entities
+    entities = find_matched_entities(query)
+
+    logger.info(f"[SEARCH_NODE] <QUERY>: {query}")
+
+    # 3️⃣ Retrieve top products
     retrieved = sorted(retriever(query, top_k=5), key=lambda r: r["confidence"], reverse=True)
 
     retrieved_titles = [r["title"] for r in retrieved]
-    retrieved_scores = [r["confidence"] for r in retrieved]
-    logger.info(f"{retrieved_titles} - {retrieved_scores}")
 
-    # Filter df only for matched titles
+    # 4️⃣ Filter df for matched titles
     matched_df = df1[df1["title"].isin(retrieved_titles)]
 
-    # Map title → confidence
+    # 5️⃣ Map title → confidence
     confidence_map = {item["title"]: item["confidence"] for item in retrieved}
 
-    # Convert to dict keyed by title in order of confidence
+    # 6️⃣ Build matched_products dict
     state.matched_products = {
         title: {
             "subtitle": row["subtitle"],
@@ -42,17 +47,15 @@ def search_node(state: State, df1: pd.DataFrame, df2: pd.DataFrame, retriever: V
             "num_colors": row["num_colors"],
             "img": df2[df2['title_x'] == title].head(1)['img'].iloc[0],
             "confidence": confidence_map.get(title),
-            "entities": find_matched_entities(query)
+            "entities": entities
         }
         for title, row in matched_df.set_index("title").loc[retrieved_titles].iterrows()
     }
 
-
-
-    logger.debug("[SEARCH_NODE] Sorted matched products: %s", state.matched_products)
-
+    # 7️⃣ Finalize state
     state.search_query = query
     state.query = "communicate to the user"
+
     return state
 
 
